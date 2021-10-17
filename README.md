@@ -31,6 +31,7 @@
 * Create Entities
 * Create User
 * Edit User
+* Delete User
 * List All users
 * List One user
 * Filter: findByEstado
