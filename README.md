@@ -16,7 +16,11 @@
 ```
     connection params
 ```
-#### how to run this backend
+#### PORT USED
+```
+    PORT: 8080
+```
+#### How to run this backend
 ```
     right click / run as Springboot App
 ```
