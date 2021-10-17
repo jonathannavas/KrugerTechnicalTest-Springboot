@@ -16,7 +16,7 @@
 ```
     connection params
 ```
-#### PORT USED
+#### Port used
 ```
     PORT: 8080
 ```
