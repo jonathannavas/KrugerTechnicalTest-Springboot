@@ -29,3 +29,8 @@
 * Create Project
 * Setup enviroment
 * Create Entities
+* Create User
+* Edit User
+* List All users
+* List One user
+* Filter: findByEstado

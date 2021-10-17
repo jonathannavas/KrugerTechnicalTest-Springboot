@@ -1,9 +1,7 @@
 package com.jonathannavas.springboot.kruger.app.models.entity;
 
 import java.util.Date;
-import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -11,14 +9,12 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -31,11 +27,13 @@ public class Usuario {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
+	@Pattern(regexp = "[A-Za-z ]+", message = "El nombre no puede tener numeros o caracteres especiales")
 	@NotEmpty(message = "El nombre es obligatorio")
-	@Size(min = 4, max = 12, message = "El tamaño requerido esta entre 4 y 12 caracteres")
+	@Size(min = 2, max = 60, message = "El tamaño requerido esta entre 2 y 60 caracteres")
 	@Column(nullable = false)
 	private String nombre;
 
+	@Pattern(regexp = "[A-Za-z ]+", message = "El apellido no puede tener numeros o caracteres especiales")
 	@NotEmpty(message = "El apellido es obligatorio")
 	@Column(nullable = false)
 	private String apellido;
@@ -45,17 +43,16 @@ public class Usuario {
 	@Column(nullable = false, unique = true)
 	private String email;
 
+	@Pattern(regexp = "[0-9]+", message = "La cedula no puede tener letras o caracteres especiales")
 	@NotEmpty(message = "La cedula es requerida")
 	@Size(min = 10, max = 10, message = "Ingrese una cédula válida")
 	@Column(nullable = false, unique = true)
 	private String cedula;
 
-	@NotEmpty(message = "El campo nickname es requerido")
-	@Column(nullable = false, unique = true)
-	private String nickname;
+	@Column(nullable = true, unique = true)
+	private String username;
 
-	@NotEmpty(message = "El campo password es requerido")
-	@Column(nullable = false)
+	@Column(nullable = true)
 	private String password;
 
 	@Column(nullable = true)
@@ -69,17 +66,23 @@ public class Usuario {
 
 	@Column(nullable = false)
 	private Boolean estado;
+	
+	@Column(nullable = true)
+	private Date fecha_vacuna;
+	
+	@Column(nullable = true)
+	private Integer num_dosis;
 
-	@NotNull(message = "La vacuna no puede estar vacia, seleccione la por defecto")
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "vacuna_id")
 	@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
 	private Vacuna vacuna;
 
-	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	@JoinTable(name = "usuarios_roles", joinColumns = @JoinColumn(name = "usuario_id"), inverseJoinColumns = @JoinColumn(name = "role id"), uniqueConstraints = {
-			@UniqueConstraint(columnNames = { "usuario_id", "role_Id" }) })
-	private List<Role> roles;
+	@NotNull(message = "El rol de usuario es obligatorio id: 1 usuario comun, id: 2: admin")
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "role_id")
+	@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
+	private Role role;
 
 	public Long getId() {
 		return id;
@@ -121,12 +124,12 @@ public class Usuario {
 		this.cedula = cedula;
 	}
 
-	public String getNickname() {
-		return nickname;
+	public String getUsername() {
+		return username;
 	}
 
-	public void setNickname(String nickname) {
-		this.nickname = nickname;
+	public void setUsername(String username) {
+		this.username = username;
 	}
 
 	public String getPassword() {
@@ -177,12 +180,28 @@ public class Usuario {
 		this.vacuna = vacuna;
 	}
 
-	public List<Role> getRoles() {
-		return roles;
+	public Role getRole() {
+		return role;
 	}
 
-	public void setRoles(List<Role> roles) {
-		this.roles = roles;
+	public void setRole(Role role) {
+		this.role = role;
+	}
+
+	public Date getFecha_vacuna() {
+		return fecha_vacuna;
+	}
+
+	public void setFecha_vacuna(Date fecha_vacuna) {
+		this.fecha_vacuna = fecha_vacuna;
+	}
+
+	public Integer getNum_dosis() {
+		return num_dosis;
+	}
+
+	public void setNum_dosis(Integer num_dosis) {
+		this.num_dosis = num_dosis;
 	}
 
 }
