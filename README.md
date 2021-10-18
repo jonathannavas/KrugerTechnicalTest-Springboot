@@ -50,6 +50,11 @@ to
 ```
 .anyRequest().permitAll()
 ```
+And you will see this api on 
+
+```
+http://localhost:8080/swagger-ui.html#/
+```
 
 If you will check this backend use Postman
 In postman you need to get your token in this url
