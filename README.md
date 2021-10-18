@@ -25,7 +25,7 @@
     right click / run as Springboot App
 ```
 
-#### Taks completed
+#### Tasks completed
 * Create Project
 * Setup enviroment
 * Create Entities
@@ -35,3 +35,5 @@
 * List All users
 * List One user
 * Filter: findByEstado
+* Oauth2 Implemented
+* Setup User Roles

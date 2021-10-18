@@ -16,12 +16,8 @@ public interface IUsuarioDao extends CrudRepository<Usuario, Long>{
 	@Query("from Vacuna")
 	public List<Vacuna> findAllVacunas();
 	
-	@Query("from Role")
-	public List<Role> findAllRoles();
-	
-
 	public List<Usuario> findByVacuna(String vacuna);
+	
 	public List<Usuario> findByEstado(Boolean estado);
-	public List<Usuario> findByRole(String role);
 
 }

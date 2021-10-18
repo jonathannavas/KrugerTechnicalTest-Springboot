@@ -1,7 +1,10 @@
 package com.jonathannavas.springboot.kruger.app.models.entity;
 
+import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -9,8 +12,11 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -21,7 +27,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
 @Table(name = "usuarios")
-public class Usuario {
+public class Usuario implements Serializable{
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -78,11 +84,10 @@ public class Usuario {
 	@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
 	private Vacuna vacuna;
 
-	@NotNull(message = "El rol de usuario es obligatorio id: 1 usuario comun, id: 2: admin")
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "role_id")
-	@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
-	private Role role;
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(name = "usuarios_roles", joinColumns = @JoinColumn(name = "usuario_id"), inverseJoinColumns = @JoinColumn(name = "role_id"), uniqueConstraints = {
+			@UniqueConstraint(columnNames = { "usuario_id", "role_id" }) })
+	private List<Role> roles;
 
 	public Long getId() {
 		return id;
@@ -180,12 +185,12 @@ public class Usuario {
 		this.vacuna = vacuna;
 	}
 
-	public Role getRole() {
-		return role;
+	public List<Role> getRoles() {
+		return roles;
 	}
 
-	public void setRole(Role role) {
-		this.role = role;
+	public void setRoles(List<Role> roles) {
+		this.roles = roles;
 	}
 
 	public Date getFecha_vacuna() {
@@ -204,4 +209,5 @@ public class Usuario {
 		this.num_dosis = num_dosis;
 	}
 
+	private static final long serialVersionUID = 1L;
 }

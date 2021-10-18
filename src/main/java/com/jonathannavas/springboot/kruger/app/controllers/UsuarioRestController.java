@@ -1,6 +1,5 @@
 package com.jonathannavas.springboot.kruger.app.controllers;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,7 +11,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,6 +29,7 @@ import com.jonathannavas.springboot.kruger.app.models.entity.Usuario;
 import com.jonathannavas.springboot.kruger.app.models.entity.Vacuna;
 import com.jonathannavas.springboot.kruger.app.models.services.IUsuarioService;
 
+@CrossOrigin(origins = "*" )
 @RestController
 @RequestMapping("/api")
 public class UsuarioRestController {
@@ -34,11 +37,16 @@ public class UsuarioRestController {
 	@Autowired
 	private IUsuarioService usuarioService;
 	
+	@Autowired
+	private BCryptPasswordEncoder passwordEncoder;
+	
+	@Secured("ROLE_ADMIN")
 	@GetMapping("/usuarios")
 	public List<Usuario> index(){
 		return usuarioService.findAll();
 	}
 	
+	@Secured({"ROLE_ADMIN", "ROLE_USER"})
 	@GetMapping("/usuarios/{id}")
 	public ResponseEntity<?> show(@PathVariable Long id) {
 		
@@ -61,6 +69,7 @@ public class UsuarioRestController {
 		return new ResponseEntity<Usuario>(usuario, HttpStatus.OK);
 	}
 	
+	@Secured("ROLE_ADMIN")
 	@PostMapping("/usuarios")
 	public ResponseEntity<?> create(@Valid @RequestBody Usuario usuario, BindingResult result) {
 		
@@ -82,10 +91,12 @@ public class UsuarioRestController {
 		
 		try {
 			
+			String passwordBcrypt = passwordEncoder.encode(usuario.getCedula());
 			usuario.setUsername(usuario.getCedula());
-			usuario.setPassword(usuario.getCedula());
+			usuario.setPassword(passwordBcrypt);
 			usuario.setEstado(false);
 			usuario.setVacuna(vacuna);
+			usuario.setRoles(usuario.getRoles());
 			
 			usuarioNuevo = usuarioService.save(usuario);
 		} catch (DataAccessException e) {
@@ -99,6 +110,7 @@ public class UsuarioRestController {
 		
 	}
 	
+	@Secured({"ROLE_ADMIN", "ROLE_USER"})
 	@PutMapping("/usuarios/{id}")
 	public ResponseEntity<?> update(@Valid @RequestBody Usuario usuario, BindingResult result, @PathVariable Long id) {
 		
@@ -142,7 +154,7 @@ public class UsuarioRestController {
 			usuarioActual.setNum_dosis( usuario.getNum_dosis() );
 			usuarioActual.setDireccion( usuario.getDireccion() );
 			usuarioActual.setNumero_telefono( usuario.getNumero_telefono() );
-			usuarioActual.setRole( usuario.getRole() );
+			usuarioActual.setRoles( usuario.getRoles() );
 			usuarioActual.setVacuna(  usuario.getVacuna());
 			
 			usuarioActualizado = usuarioService.save(usuarioActual);
@@ -158,6 +170,7 @@ public class UsuarioRestController {
 		return new ResponseEntity<Map<String, Object>>(response, HttpStatus.CREATED);
 	}
 	
+	@Secured("ROLE_ADMIN")
 	@DeleteMapping("/usuarios/{id}")
 	public ResponseEntity<?> delete(@PathVariable Long id) {
 		Map<String, Object> response = new HashMap<>();
@@ -176,6 +189,8 @@ public class UsuarioRestController {
 	public List<Usuario> estadoVacuna(@RequestParam Boolean estado){
 		return usuarioService.findByEstado(estado);
 	}
+	
+	
 	/*
 	@GetMapping("/usuarios/tipo-vacuna")
 	public List<Usuario> tipoVacuna(@RequestParam String vacuna){

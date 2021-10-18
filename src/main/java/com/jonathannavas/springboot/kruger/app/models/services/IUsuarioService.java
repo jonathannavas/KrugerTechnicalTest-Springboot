@@ -14,7 +14,6 @@ public interface IUsuarioService {
 	public void delete(Long id);
 	
 	public List<Vacuna> findAllVacunas();
-	public List<Role> findAllRoles();
 	
 	public Usuario findByUsername(String username);
 	
