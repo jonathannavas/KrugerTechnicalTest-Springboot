@@ -1,6 +1,7 @@
 package com.jonathannavas.springboot.kruger.app.models.entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -16,6 +17,8 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
@@ -23,7 +26,11 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 
 @Entity
 @Table(name = "usuarios")
@@ -62,6 +69,9 @@ public class Usuario implements Serializable{
 	private String password;
 
 	@Column(nullable = true)
+	@Temporal(TemporalType.DATE)
+	@DateTimeFormat(pattern = "yyyy-MM-dd")
+	@JsonFormat(pattern = "yyyy-MM-dd")
 	private Date fecha_nacimiento;
 
 	@Column(nullable = true)
@@ -70,10 +80,13 @@ public class Usuario implements Serializable{
 	@Column(nullable = true)
 	private String numero_telefono;
 
-	@Column(nullable = false)
+	@Column(nullable = true)
 	private Boolean estado;
 	
 	@Column(nullable = true)
+	@Temporal(TemporalType.DATE)
+	@DateTimeFormat(pattern = "yyyy-MM-dd")
+	@JsonFormat(pattern = "yyyy-MM-dd")
 	private Date fecha_vacuna;
 	
 	@Column(nullable = true)
@@ -84,10 +97,17 @@ public class Usuario implements Serializable{
 	@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
 	private Vacuna vacuna;
 
-	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "usuarios_roles", joinColumns = @JoinColumn(name = "usuario_id"), inverseJoinColumns = @JoinColumn(name = "role_id"), uniqueConstraints = {
-			@UniqueConstraint(columnNames = { "usuario_id", "role_id" }) })
+	
+	@ManyToMany(fetch = FetchType.LAZY,cascade = CascadeType.MERGE,targetEntity = Role.class)
+	@JoinTable(name="usuarios_roles",joinColumns = @JoinColumn(name="usuario_id")
+	,inverseJoinColumns=@JoinColumn(name="role_id")
+	,uniqueConstraints={@UniqueConstraint(columnNames= {"usuario_id","role_id"})})
 	private List<Role> roles;
+
+	
+	public Usuario() {
+		this.roles = new ArrayList<Role>();
+	}
 
 	public Long getId() {
 		return id;

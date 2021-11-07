@@ -20,6 +20,17 @@ public class Role implements Serializable {
 	@Column(unique = true, length = 20)
 	private String nombre;
 
+	
+	public Role() {
+		
+	}
+	
+	public Role(int id, String nombre) {
+		super();
+		this.id = (long) id;
+		this.nombre = nombre;
+	}
+
 	public Long getId() {
 		return id;
 	}

@@ -9,6 +9,9 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
@@ -28,6 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.jonathannavas.springboot.kruger.app.models.entity.Usuario;
 import com.jonathannavas.springboot.kruger.app.models.entity.Vacuna;
 import com.jonathannavas.springboot.kruger.app.models.services.IUsuarioService;
+import com.jonathannavas.springboot.kruger.app.models.entity.Role;
 
 @CrossOrigin(origins = "*" )
 @RestController
@@ -40,10 +44,18 @@ public class UsuarioRestController {
 	@Autowired
 	private BCryptPasswordEncoder passwordEncoder;
 	
-	@Secured("ROLE_ADMIN")
+	/*@Secured("ROLE_ADMIN")
 	@GetMapping("/usuarios")
 	public List<Usuario> index(){
 		return usuarioService.findAll();
+	}*/
+	
+	@Secured("ROLE_ADMIN")
+	@GetMapping("/usuarios")
+	public Page<Usuario> index(@RequestParam int page, @RequestParam int limit){
+		Page<Usuario> listUsuarios = usuarioService.findAll(
+				PageRequest.of(page, limit, Sort.by("id").descending()));
+		return listUsuarios;
 	}
 	
 	@Secured({"ROLE_ADMIN", "ROLE_USER"})
@@ -96,7 +108,7 @@ public class UsuarioRestController {
 			usuario.setPassword(passwordBcrypt);
 			usuario.setEstado(false);
 			usuario.setVacuna(vacuna);
-			usuario.setRoles(usuario.getRoles());
+			usuario.getRoles().add(new Role(1, "ROLE_USER"));
 			
 			usuarioNuevo = usuarioService.save(usuario);
 		} catch (DataAccessException e) {
