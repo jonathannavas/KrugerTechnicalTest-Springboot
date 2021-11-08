@@ -86,7 +86,7 @@ public class Usuario implements Serializable{
 	@Column(nullable = true)
 	@Temporal(TemporalType.DATE)
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
-	@JsonFormat(pattern = "yyyy-MM-dd")
+	@JsonFormat(pattern = "yyyy-MM-dd", timezone = JsonFormat.DEFAULT_LOCALE)
 	private Date fecha_vacuna;
 	
 	@Column(nullable = true)

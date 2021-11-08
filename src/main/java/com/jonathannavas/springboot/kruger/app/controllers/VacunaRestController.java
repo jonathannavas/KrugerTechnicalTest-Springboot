@@ -25,7 +25,7 @@ public class VacunaRestController {
 	@Autowired
 	private IUsuarioService usuarioService;
 	
-	@Secured("ROLE_USER")
+	@Secured({"ROLE_USER","ROLE_ADMIN"})
 	@GetMapping("/vacunas")
 	public List<Vacuna> index(){
 		List<Vacuna> vacunas = usuarioService.findAllVacunaList();

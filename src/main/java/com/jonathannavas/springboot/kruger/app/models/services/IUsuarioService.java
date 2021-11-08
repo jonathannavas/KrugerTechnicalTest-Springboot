@@ -1,5 +1,6 @@
 package com.jonathannavas.springboot.kruger.app.models.services;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
@@ -27,5 +28,11 @@ public interface IUsuarioService {
 	public List<Usuario> findByEstado(Boolean estado);
 	
 	public Page<Usuario> findAll(Pageable pageable);
+	
+	public Page<Usuario> findByEstado(Pageable pageable,boolean estado);
+	
+	public Page<Usuario> findByVacuna(Pageable pageable,Long vacunaId);
+	
+	public Page<Usuario> findByFechaVacuna(Pageable pageable,Date fechaInicio, Date fechaFin);
 	
 }

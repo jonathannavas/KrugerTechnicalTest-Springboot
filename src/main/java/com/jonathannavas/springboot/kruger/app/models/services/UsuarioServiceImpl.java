@@ -1,6 +1,7 @@
 package com.jonathannavas.springboot.kruger.app.models.services;
 
 
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -109,6 +110,24 @@ public class UsuarioServiceImpl implements IUsuarioService, UserDetailsService {
 	@Transactional(readOnly = true)
 	public List<Vacuna> findAllVacunaList() {
 		return usuarioDao.findAllVacunaList();
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public Page<Usuario> findByEstado(Pageable pageable, boolean estado) {
+		return usuarioDao.findByEstado(pageable, estado);
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public Page<Usuario> findByVacuna(Pageable pageable, Long vacunaId) {
+		return usuarioDao.findByVacuna(pageable, vacunaId);
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public Page<Usuario> findByFechaVacuna(Pageable pageable, Date fechaInicio, Date fechaFin) {
+		return usuarioDao.findByFechaVacuna(pageable, fechaInicio, fechaFin);
 	}
 
 

@@ -1,5 +1,6 @@
 package com.jonathannavas.springboot.kruger.app.models.dao;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
@@ -25,7 +26,15 @@ public interface IUsuarioDao extends CrudRepository<Usuario, Long>{
 	
 	public List<Usuario> findByEstado(Boolean estado);
 	
-	//@Query("SELECT u FROM Usuario u")
+	@Query("SELECT u FROM Usuario u WHERE u.id != 1")
 	public Page<Usuario> findAll(Pageable pageable);
-
+	
+	@Query("SELECT u FROM Usuario u WHERE u.id != 1 AND u.estado = ?1")
+	public Page<Usuario> findByEstado(Pageable pageable,boolean estado);
+	
+	@Query("SELECT u FROM Usuario u WHERE u.id != 1 AND u.vacuna.id = ?1")
+	public Page<Usuario> findByVacuna(Pageable pageable,Long vacunaId);
+	
+	@Query("SELECT u FROM Usuario u WHERE u.id != 1 AND u.fecha_vacuna BETWEEN ?1 AND ?2")
+	public Page<Usuario> findByFechaVacuna(Pageable pageable,Date fechaInicio, Date fechaFin);
 }
